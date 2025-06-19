@@ -1,95 +1,113 @@
 const title = document.querySelector('input[name="title"]');
 const description = document.querySelector('textarea');
-const submitBtn = document.querySelector('#submit');
+const submitBtn= document.querySelector('#submit');
 const notesList = document.querySelector('#displayNotes');
 
-submitBtn.addEventListener('click', (event) => {
+submitBtn.addEventListener('click',(event)=>{
     event.preventDefault();
     const currentTitle = title.value;
     const currentDescription = description.value;
 
-    const newNote = document.createElement('div');
-    newNote.className = "notes";
+    //if user passes empty title and description
+    if (!currentTitle && !curretDescription) {
+        alert('Please enter a title or description for your task!');
+        return; // Stop the function execution
+    }
 
-    // title 
+    const newNote = document.createElement('div');
+    newNote.className = "notes block";
+
+
+    //title
     const newTitle = document.createElement('h3');
     newTitle.className = 'title';
     newTitle.innerText = currentTitle;
 
-    // description
-    const newDescr = document.createElement('p');
-    newDescr.className = 'description';
-    newDescr.innerText = currentDescription;
+    //description
+    const newdescr = document.createElement('p');
+    newdescr.className = 'description';
+    newdescr.innerText = currentDescription;
+    
+    //delete button
+    const delbtn = document.createElement('button');
+    delbtn.innerText = 'Delete'
+    delbtn.className = 'delbtn';
 
-    // delete button
-    const deleteBtn = document.createElement('button');
-    deleteBtn.className = 'delete';
-    deleteBtn.innerText = 'Delete';
+    //update button
+    const updatebtn = document.createElement('button');
+    updatebtn.innerText = 'update';
+    updatebtn.className = 'updatebtn';
 
-    deleteBtn.addEventListener('click', () => {
-        newNote.remove();
-    });
+    // Create a container for the buttons
+    const buttonContainer = document.createElement('div');
+    buttonContainer.className = 'note-buttons'; // Add a class for styling
+    buttonContainer.append(delbtn);
+    buttonContainer.append(updatebtn);
 
-    // update button
-    const updateBtn = document.createElement('button');
-    updateBtn.className = 'update';
-    updateBtn.innerText = 'Update';
+    //inputs for updating notes
+    const updTitle = document.createElement('input');
+    updTitle.type = 'text';
+    const updDescr = document.createElement('textarea');
+    updTitle.style.display = 'none';
+    updDescr.style.display = 'none';
 
-    // update inputs
-    const updateTitle = document.createElement('input');
-    updateTitle.type = 'text';
-    updateTitle.placeholder = 'Update Title';
-    updateTitle.style.display = 'none';
-
-    const updateDescription = document.createElement('textarea');
-    updateDescription.placeholder = 'Update Description';
-    updateDescription.style.display = 'none';
-
-    const saveBtn = document.createElement('button');
-    saveBtn.innerText = 'Save';
-    saveBtn.className = 'save';
-    saveBtn.style.display = 'none';
-
-    // Save update
-    saveBtn.addEventListener('click', () => {
-        newTitle.innerText = updateTitle.value;
-        newDescr.innerText = updateDescription.value;
-
-        newTitle.style.display = 'block';
-        newDescr.style.display = 'block';
-
-        updateTitle.style.display = 'none';
-        updateDescription.style.display = 'none';
-        saveBtn.style.display = 'none';
-    });
-
-    updateBtn.addEventListener('click', () => {
-        // hide old
-        newTitle.style.display = 'none';
-        newDescr.style.display = 'none';
-
-        // show inputs
-        updateTitle.style.display = 'block';
-        updateDescription.style.display = 'block';
-        saveBtn.style.display = 'inline';
-
-        // pre-fill
-        updateTitle.value = newTitle.innerText;
-        updateDescription.value = newDescr.innerText;
-    });
-
-    // append to note
+    //appending all elements to the note
     newNote.appendChild(newTitle);
-    newNote.appendChild(newDescr);
-    newNote.appendChild(deleteBtn);
-    newNote.appendChild(updateBtn);
-    newNote.appendChild(updateTitle);
-    newNote.appendChild(updateDescription);
-    newNote.appendChild(saveBtn);
+    newNote.append(newdescr);
+    newNote.append(buttonContainer); //directly added this container
+    // newNote.append(delbtn);
+    // newNote.append(updatebtn);
+    newNote.append(updTitle,updDescr);
 
-    notesList.appendChild(newNote);
+    //appending note to the list of notes
+    notesList.append(newNote);
 
-    // Clear inputs
+    // Clear the input fields after submission
     title.value = '';
     description.value = '';
+
+    //updating the note
+    updatebtn.addEventListener('click',()=>{
+        newTitle.style.display = 'none';
+        newdescr.style.display = 'none';
+
+        updTitle.style.display = 'block';
+        updDescr.style.display = 'block';
+
+        updTitle.value = newTitle.innerText;
+        updDescr.value = newdescr.innerText;
+
+        // Hide update and delete buttons during edit
+        updatebtn.style.display = 'none';
+        delbtn.style.display = 'none';
+
+        const okBtn = document.createElement('button');
+        okBtn.innerText = 'OK'
+        okBtn.className = 'okBtn'
+
+        newNote.append(okBtn);
+
+        okBtn.addEventListener('click',()=>{
+            newTitle.innerText = updTitle.value;
+            newdescr.innerText = updDescr.value;
+
+            updTitle.style.display = 'none'
+            updDescr.style.display = 'none'
+
+            newTitle.style.display = 'block'
+            newdescr.style.display = 'block'
+
+            // Show update and delete buttons again
+            updatebtn.style.display = 'inline-block'; 
+            delbtn.style.display = 'inline-block';   
+
+            okBtn.remove();
+        })
+    })
+
+    //deleting the note
+    delbtn.addEventListener('click',()=>{
+        newNote.remove();
+    })
+
 });
